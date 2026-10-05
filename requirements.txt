@@ -1,0 +1,21 @@
+# Topo-Downscale — Python dependencies
+# Install with: pip install -r requirements.txt
+
+# ── Core scientific stack ───────────────────────────────────────────────────
+numpy>=1.24,<2.0
+xarray>=2024.1
+scipy>=1.11          # DEM smoothing, interpolation
+netCDF4>=1.6         # xarray NetCDF4 engine
+
+# ── Machine Learning ────────────────────────────────────────────────────────
+torch>=2.2           # Topo-SRNet model
+torchvision>=0.17    # (optional, for augmentation utilities)
+
+# ── API / Serving ───────────────────────────────────────────────────────────
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.6
+
+# ── Dev / Utilities ─────────────────────────────────────────────────────────
+tqdm>=4.66
+python-dotenv>=1.0
