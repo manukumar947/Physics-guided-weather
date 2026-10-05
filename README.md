@@ -43,27 +43,37 @@ The result is that standard bilinear resampling of block-level forecasts to GP c
 
 Let $\mathbf{X}_c \in \mathbb{R}^{C_w \times H_c \times W_c}$ be the coarse weather tensor (bilinearly upsampled to the fine grid) and $\mathbf{S} \in \mathbb{R}^{C_s \times H_f \times W_f}$ be the static geophysical conditioning tensor. Topo-SRNet learns:
 
-$$\hat{\mathbf{X}}_f = f_\theta(\mathbf{X}_c, \mathbf{S}) = \mathbf{X}_c + \Delta_\theta(\mathbf{X}_c, \mathbf{S})$$
+$$
+\hat{\mathbf{X}}_f = f_\theta(\mathbf{X}_c, \mathbf{S}) = \mathbf{X}_c + \Delta_\theta(\mathbf{X}_c, \mathbf{S})
+$$
 
 The global residual formulation forces the network to learn the **topographic correction delta** $\Delta_\theta$ rather than the full meteorological field — reducing the effective learning target range and accelerating convergence.
 
 ### 2.2 Physics-Informed Loss Function
 
-$$\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{MSE}} + \lambda_1 \mathcal{L}_{\text{lapse}} + \lambda_2 \mathcal{L}_{\text{mass}}$$
+$$
+\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{MSE}} + \lambda_1 \mathcal{L}_{\text{lapse}} + \lambda_2 \mathcal{L}_{\text{mass}}
+$$
 
 **Reconstruction loss**
 
-$$\mathcal{L}_{\text{MSE}} = \frac{1}{N} \left\| \hat{\mathbf{X}}_f - \mathbf{X}_{\text{target}} \right\|_2^2$$
+$$
+\mathcal{L}_{\text{MSE}} = \frac{1}{N} \left\| \hat{\mathbf{X}}_f - \mathbf{X}_{\text{target}} \right\|_2^2
+$$
 
 **Environmental Lapse Rate penalty** — penalises grid-cell pairs where predicted temperature *increases* with elevation, violating the standard ELR of −6.5 °C km⁻¹:
 
-$$\mathcal{L}_{\text{lapse}} = \frac{1}{|\mathcal{E}|} \sum_{(i,j) \in \mathcal{E}} \text{ReLU}\!\left(\Delta T_{ij} \cdot \Delta z_{ij}\right)$$
+$$
+\mathcal{L}_{\text{lapse}} = \frac{1}{|\mathcal{E}|} \sum_{(i,j) \in \mathcal{E}} \text{ReLU}\!\left(\Delta T_{ij} \cdot \Delta z_{ij}\right)
+$$
 
 where $\mathcal{E}$ is the set of horizontal and vertical adjacent pixel pairs, $\Delta T_{ij} = \hat{T}_i - \hat{T}_j$, and $\Delta z_{ij} = z_i - z_j$ (normalised elevation).
 
 **Sub-Grid Precipitation Mass Conservation loss** — the spatial mean of the fine-grid predicted rainfall must be consistent with the upsampled coarse-grid mean:
 
-$$\mathcal{L}_{\text{mass}} = \frac{1}{B} \sum_{b=1}^{B} \left( \frac{\bar{r}^f_b - \bar{r}^c_b}{\bar{r}^c_b + \varepsilon} \right)^2$$
+$$
+\mathcal{L}_{\text{mass}} = \frac{1}{B} \sum_{b=1}^{B} \left( \frac{\bar{r}^f_b - \bar{r}^c_b}{\bar{r}^c_b + \varepsilon} \right)^2
+$$
 
 Default weights: $\lambda_1 = 0.10$, $\lambda_2 = 0.05$, warmed up linearly over the first 10 epochs via a curriculum scheduler.
 
@@ -671,5 +681,3 @@ If you use this codebase or the methodology in your work, please cite:
 ---
 
 *This repository was developed for the Smart India Hackathon 2024 under Problem Statement 26074, Ministry of Earth Sciences / India Meteorological Department.*
-#   P h y s i c s - g u i d e d - w e a t h e r  
- 
